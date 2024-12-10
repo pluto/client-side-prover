@@ -179,7 +179,11 @@ where
             &bincode::serialize(&self.ro_consts_circuit_secondary).unwrap(),
         );
         Self::write_section_bytes(&mut out, 6, &self.ck_secondary.to_bytes());
-        Self::write_section_bytes(&mut out, 7, &bincode::serialize(&self.circuit_shape_secondary).unwrap());
+        Self::write_section_bytes(
+            &mut out,
+            7,
+            &bincode::serialize(&self.circuit_shape_secondary).unwrap(),
+        );
         Self::write_section_bytes(&mut out, 8, &bincode::serialize(&self.digest).unwrap());
 
         out

@@ -109,6 +109,18 @@ impl<E: Engine, EE: EvaluationEngineTrait<E>> BatchedRelaxedR1CSSNARKTrait<E>
 
     type VerifierKey = VerifierKey<E, EE>;
 
+    fn initialize_pk(
+        ck: Arc<CommitmentKey<E>>,
+        vk_digest: E::Scalar,
+    ) -> Result<Self::ProverKey, NovaError> {
+        // NOTE: We do not use the verifier key in this context
+        // TODO: This currently samples a `ck_c` element, does this need to
+        // be truly secret, if so, retrieve from an SRS.
+        let (pk_ee, _vk) = EE::setup(ck);
+
+        Ok(ProverKey { pk_ee, vk_digest })
+    }
+
     fn setup(
         ck: Arc<CommitmentKey<E>>,
         S: Vec<&R1CSShape<E>>,
@@ -603,6 +615,13 @@ impl<E: Engine, EE: EvaluationEngineTrait<E>> RelaxedR1CSSNARKTrait<E>
 
     fn ck_floor() -> Box<dyn for<'a> Fn(&'a R1CSShape<E>) -> usize> {
         <Self as BatchedRelaxedR1CSSNARKTrait<E>>::ck_floor()
+    }
+
+    fn initialize_pk(
+        ck: Arc<CommitmentKey<E>>,
+        vk_digest: E::Scalar,
+    ) -> Result<Self::ProverKey, NovaError> {
+        <Self as BatchedRelaxedR1CSSNARKTrait<E>>::initialize_pk(ck, vk_digest)
     }
 
     fn setup(

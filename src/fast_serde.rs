@@ -9,6 +9,7 @@
 //! the rust runtime.
 
 use std::io::{Cursor, Read};
+
 use thiserror::Error;
 
 pub static MAGIC_NUMBER: [u8; 4] = [0x50, 0x4C, 0x55, 0x54];
