@@ -24,15 +24,15 @@ use crate::{
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(bound = "")]
 pub struct ProverKey<E: Engine> {
-    ck_s: CommitmentKey<E>,
+    pub ck_s: CommitmentKey<E>,
 }
 
 /// Provides an implementation of the verifier key
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(bound = "")]
 pub struct VerifierKey<E: Engine> {
-    pub(in crate::provider) ck_v: Arc<CommitmentKey<E>>,
-    pub(in crate::provider) ck_s: CommitmentKey<E>,
+    pub ck_v: Arc<CommitmentKey<E>>,
+    pub ck_s: CommitmentKey<E>,
 }
 
 impl<E: Engine> SimpleDigestible for VerifierKey<E> {}

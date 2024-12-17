@@ -24,8 +24,8 @@ where
     S1: BatchedRelaxedR1CSSNARKTrait<E1>,
     S2: RelaxedR1CSSNARKTrait<Dual<E1>>,
 {
-    pk_primary: S1::ProverKey,
-    pk_secondary: S2::ProverKey,
+    pub pk_primary: S1::ProverKey,
+    pub pk_secondary: S2::ProverKey,
 }
 
 /// A type that holds the verifier key for `CompressedSNARK`
@@ -36,8 +36,8 @@ where
     S1: BatchedRelaxedR1CSSNARKTrait<E1>,
     S2: RelaxedR1CSSNARKTrait<Dual<E1>>,
 {
-    vk_primary: S1::VerifierKey,
-    vk_secondary: S2::VerifierKey,
+    pub vk_primary: S1::VerifierKey,
+    pub vk_secondary: S2::VerifierKey,
 }
 
 /// A SNARK that proves the knowledge of a valid `RecursiveSNARK`
@@ -70,6 +70,21 @@ where
     S1: BatchedRelaxedR1CSSNARKTrait<E1>,
     S2: RelaxedR1CSSNARKTrait<Dual<E1>>,
 {
+    pub fn initialize_pk(
+        pp: &PublicParams<E1>,
+        primary_vk_digest: E1::Scalar,
+        secondary_vk_digest: <Dual<E1> as Engine>::Scalar,
+    ) -> Result<ProverKey<E1, S1, S2>, SuperNovaError> {
+        // TODO: Should we actually clone here?
+        let pk_primary = S1::initialize_pk(pp.ck_primary.clone(), primary_vk_digest)?;
+        let pk_secondary = S2::initialize_pk(pp.ck_secondary.clone(), secondary_vk_digest)?;
+
+        return Ok(ProverKey {
+            pk_primary,
+            pk_secondary,
+        });
+    }
+
     /// Creates prover and verifier keys for `CompressedSNARK`
     pub fn setup(
         pp: &PublicParams<E1>,

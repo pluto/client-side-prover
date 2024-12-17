@@ -38,8 +38,8 @@ use crate::{
 /// A type that represents the prover's key
 #[derive(Debug, Clone)]
 pub struct ProverKey<E: Engine, EE: EvaluationEngineTrait<E>> {
-    pk_ee: EE::ProverKey,
-    vk_digest: E::Scalar, // digest of the verifier's key
+    pub pk_ee: EE::ProverKey,
+    pub vk_digest: E::Scalar, // digest of the verifier's key
 }
 
 /// A type that represents the verifier's key
@@ -96,6 +96,13 @@ pub struct RelaxedR1CSSNARK<E: Engine, EE: EvaluationEngineTrait<E>> {
 impl<E: Engine, EE: EvaluationEngineTrait<E>> RelaxedR1CSSNARKTrait<E> for RelaxedR1CSSNARK<E, EE> {
     type ProverKey = ProverKey<E, EE>;
     type VerifierKey = VerifierKey<E, EE>;
+
+    fn initialize_pk(
+        ck: Arc<CommitmentKey<E>>,
+        vk_digest: <E as Engine>::Scalar,
+    ) -> Result<Self::ProverKey, NovaError> {
+        todo!("not implemented for nova snarks");
+    }
 
     fn setup(
         ck: Arc<CommitmentKey<E>>,

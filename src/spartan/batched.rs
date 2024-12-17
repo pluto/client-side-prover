@@ -63,18 +63,18 @@ pub struct BatchedRelaxedR1CSSNARK<E: Engine, EE: EvaluationEngineTrait<E>> {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(bound = "")]
 pub struct ProverKey<E: Engine, EE: EvaluationEngineTrait<E>> {
-    pk_ee: EE::ProverKey,
-    vk_digest: E::Scalar, // digest of the verifier's key
+    pub pk_ee: EE::ProverKey,
+    pub vk_digest: E::Scalar, // digest of the verifier's key
 }
 
 /// A type that represents the verifier's key
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(bound = "")]
 pub struct VerifierKey<E: Engine, EE: EvaluationEngineTrait<E>> {
-    vk_ee: EE::VerifierKey,
+    pub vk_ee: EE::VerifierKey,
     S: Vec<R1CSShape<E>>,
     #[serde(skip, default = "OnceCell::new")]
-    digest: OnceCell<E::Scalar>,
+    pub digest: OnceCell<E::Scalar>,
 }
 
 impl<E: Engine, EE: EvaluationEngineTrait<E>> VerifierKey<E, EE> {
@@ -108,6 +108,18 @@ impl<E: Engine, EE: EvaluationEngineTrait<E>> BatchedRelaxedR1CSSNARKTrait<E>
     type ProverKey = ProverKey<E, EE>;
 
     type VerifierKey = VerifierKey<E, EE>;
+
+    fn initialize_pk(
+        ck: Arc<CommitmentKey<E>>,
+        vk_digest: E::Scalar,
+    ) -> Result<Self::ProverKey, NovaError> {
+        // NOTE: We do not use the verifier key in this context
+        // TODO: This currently samples a `ck_c` element, does this need to
+        // be truly secret, if so, retrieve from an SRS.
+        let (pk_ee, _vk) = EE::setup(ck);
+
+        Ok(ProverKey { pk_ee, vk_digest })
+    }
 
     fn setup(
         ck: Arc<CommitmentKey<E>>,
@@ -603,6 +615,13 @@ impl<E: Engine, EE: EvaluationEngineTrait<E>> RelaxedR1CSSNARKTrait<E>
 
     fn ck_floor() -> Box<dyn for<'a> Fn(&'a R1CSShape<E>) -> usize> {
         <Self as BatchedRelaxedR1CSSNARKTrait<E>>::ck_floor()
+    }
+
+    fn initialize_pk(
+        ck: Arc<CommitmentKey<E>>,
+        vk_digest: E::Scalar,
+    ) -> Result<Self::ProverKey, NovaError> {
+        <Self as BatchedRelaxedR1CSSNARKTrait<E>>::initialize_pk(ck, vk_digest)
     }
 
     fn setup(

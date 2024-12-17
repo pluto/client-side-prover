@@ -478,6 +478,13 @@ impl<E: Engine, EE: EvaluationEngineTrait<E>> RelaxedR1CSSNARKTrait<E> for Relax
         })
     }
 
+    fn initialize_pk(
+        _ck: Arc<CommitmentKey<E>>,
+        _vk_digest: <E as Engine>::Scalar,
+    ) -> Result<Self::ProverKey, NovaError> {
+        todo!("not implemented for nova snarks");
+    }
+
     fn setup(
         ck: Arc<CommitmentKey<E>>,
         S: &R1CSShape<E>,

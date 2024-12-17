@@ -89,11 +89,11 @@ where
     F_arity_secondary: usize,
     ro_consts_primary: ROConstants<E>,
     ro_consts_circuit_primary: ROConstantsCircuit<Dual<E>>,
-    ck_primary: Arc<CommitmentKey<E>>,
+    pub ck_primary: Arc<CommitmentKey<E>>,
     circuit_shape_primary: R1CSWithArity<E>,
     ro_consts_secondary: ROConstants<Dual<E>>,
     ro_consts_circuit_secondary: ROConstantsCircuit<E>,
-    ck_secondary: Arc<CommitmentKey<Dual<E>>>,
+    pub ck_secondary: Arc<CommitmentKey<Dual<E>>>,
     circuit_shape_secondary: R1CSWithArity<Dual<E>>,
     augmented_circuit_params_primary: NovaAugmentedCircuitParams,
     augmented_circuit_params_secondary: NovaAugmentedCircuitParams,
@@ -687,8 +687,8 @@ where
     S1: RelaxedR1CSSNARKTrait<E1>,
     S2: RelaxedR1CSSNARKTrait<Dual<E1>>,
 {
-    pk_primary: S1::ProverKey,
-    pk_secondary: S2::ProverKey,
+    pub pk_primary: S1::ProverKey,
+    pub pk_secondary: S2::ProverKey,
 }
 
 /// A type that holds the verifier key for `CompressedSNARK`
